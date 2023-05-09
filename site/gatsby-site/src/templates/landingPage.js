@@ -41,7 +41,7 @@ const LandingPage = (props) => {
 
   const { t } = useTranslation(['translation', 'landing']);
 
-  const title = t('Welcome to the Artificial Intelligence Incident Database', { ns: 'landing' });
+  const title = t('Welcome to the Deepfake Incident Database', { ns: 'landing' });
 
   const metaTitle = title;
 
