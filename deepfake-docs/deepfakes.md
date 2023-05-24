@@ -28,6 +28,8 @@ However, there still remain some features that remain unrealized, and are in the
 
 ## Mock Front-End Designs
 
+Below are descriptions of a few of our key front-end design mockups. The full set of mockup images, as well as the design files from the open-source Penpot tool, are [here](https://drive.google.com/drive/folders/1_r3qoRPFh7tEV7RWvmwOAmVI5dxE0a9u?usp=share_link).
+
 ![](mock-submission.jpg)
 
 This is the front-end mock design for the video URL feature in the submission form. We have successfully implemented this, and added a feature which retrieves the thumbnail of the provided video into a Cloudinary image store. This image can later be used as a fallback for the video in the event the deepfake video gets removed from the platform.
