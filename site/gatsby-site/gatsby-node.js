@@ -294,6 +294,8 @@ exports.createSchemaCustomization = ({ actions }) => {
 exports.onPreBootstrap = async ({ reporter }) => {
   const migrationsActivity = reporter.activityTimer(`Migrations`);
 
+  const doTranslations = false;
+
   if (!process.env.MONGODB_MIGRATIONS_CONNECTION_STRING) {
     console.warn('MONGODB_MIGRATIONS_CONNECTION_STRING is not set, skipping migrations.');
   } else if (process.env.CONTEXT !== 'production') {
@@ -311,7 +313,7 @@ exports.onPreBootstrap = async ({ reporter }) => {
     migrationsActivity.end();
   }
 
-  if (process.env.CONTEXT === 'production') {
+  if (doTranslations && process.env.CONTEXT === 'production') {
     const translationsActivity = reporter.activityTimer(`Translations`);
 
     translationsActivity.start();
