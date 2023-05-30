@@ -80,7 +80,7 @@ const config = {
   },
   sidebar: {
     navConfig: [
-      { title: 'Welcome to the DIID', label: 'welcome', url: '/', items: [] },
+      { title: 'Welcome to the DFID', label: 'welcome', url: '/', items: [] },
       { title: 'Discover Incidents', label: 'discover', url: '/apps/discover/', items: [] },
       { title: 'Spatial View', label: 'spatial', url: '/summaries/spatial/', items: [] },
       { title: 'Table View', label: 'incidents', url: '/apps/incidents/', items: [] },
