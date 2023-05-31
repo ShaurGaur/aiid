@@ -1,7 +1,7 @@
 const config = {
   gatsby: {
     pathPrefix: '/',
-    siteUrl: 'https://incidentdatabase.ai',
+    siteUrl: 'https://codefreeze--dfid.netlify.app',
     gaTrackingId: 'UA-23867277-2',
   },
   realm: {
