@@ -47,7 +47,8 @@ const Header = ({ location = null }) => {
           },
         } = data;
 
-        const finalLogoLink = logo.link !== '' ? logo.link : 'https://incidentdatabase.ai/';
+        const finalLogoLink =
+          logo.link !== '' ? logo.link : 'https://codefreeze--dfid.netlify.app/';
 
         var SocialMediaIcons = () =>
           config.header.social && (

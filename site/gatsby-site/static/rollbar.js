@@ -3,7 +3,7 @@
 let environment = 'other';
 if (location.hostname == 'incidentdatabase.ai') {
   environment = 'production';
-} else if (location.hostname == 'staging-aiid.netlify.app') {
+} else if (location.hostname == 'codefreeze--dfid.netlify.app') {
   environment == 'staging';
 } else if (location.hostname == 'localhost') {
   environment = 'localhost';
