@@ -1,8 +1,10 @@
 # Deepfake Incident Database (DFID)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9eb0dda2-916c-46f9-a0bd-9ddab3879c6e/deploy-status)](https://app.netlify.com/sites/aiid/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6119239a-06ae-4622-84c8-bc88e0b576b5/deploy-status)](https://app.netlify.com/sites/dfid/deploys)
 
-For **design**, **planning** and **roadmap** information for the Deepfake Incident Database, developed by the Oregon State University Capstone team in 2023, you can find information in [deepfake-docs/deepfakes.md](deepfake-docs/deepfakes.md). This document below will show information about:
+For **design**, **planning**, and **roadmap** information for the Deepfake Incident Database, developed by the Oregon State University Capstone team in 2023, you can find information in [deepfake-docs/deepfakes.md](deepfake-docs/deepfakes.md).
+
+This document below will show information about:
 
 1. **Setup instructions** to install the codebase, and to be able to run and deploy the code.
 1. **Architecture** of the Deepfake Incident Database.

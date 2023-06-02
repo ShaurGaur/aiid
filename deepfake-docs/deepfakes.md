@@ -28,7 +28,7 @@ However, there still remain some features that remain unrealized, and are in the
 
 ## Mock Front-End Designs
 
-Below are descriptions of a few of our key front-end design mockups. The full set of mockup images, as well as the design files from the open-source Penpot tool, are [here](https://drive.google.com/drive/folders/1_r3qoRPFh7tEV7RWvmwOAmVI5dxE0a9u?usp=share_link).
+Below are descriptions of a few of our key front-end design mockups. The full set of mockup images, as well as the design files from the open-source Penpot tool, are in the [mockups](./mockups) folder.
 
 ![](mock-submission.jpg)
 
