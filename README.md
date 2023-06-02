@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/6119239a-06ae-4622-84c8-bc88e0b576b5/deploy-status)](https://app.netlify.com/sites/dfid/deploys)
 
-For **design**, **planning**, and **roadmap** information for the Deepfake Incident Database, developed by the Oregon State University Capstone team in 2023, you can find information in [deepfake-docs/deepfakes.md](deepfake-docs/deepfakes.md).
+For **design**, **planning**, and **roadmap** information for the Deepfake Incident Database, developed by the Oregon State University Capstone team in 2023, you can find information in [deepfake-utils/deepfakes.md](deepfake-utils/deepfakes.md).
 
 This document below will show information about:
 

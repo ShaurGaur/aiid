@@ -16,6 +16,7 @@ Our project's requirements changed during the development process, and we delive
 
 * Integrate video storage and playback.
 * Collect a [seed datasest](https://drive.google.com/file/d/118pOK2x0fccbUUSqV5X5Mz9ynHfLlAyw/view) of deepfake incidents.
+* Create a [script](deepfake_seeddata_scraper.js) to scrape data from [deepfaked.video](https://deepfaked.video/).
 * Create a Deepfake Incident Database website with these capabilities.
 
 However, there still remain some features that remain unrealized, and are viable next steps of this project. The **roadmap** for these is below, ordered by the priority of these features.
