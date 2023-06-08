@@ -86,7 +86,7 @@ const FacetList = ({ namespace, instant_facet, short_name, stats, geocodes }) =>
                     `/apps/discover?classifications=` +
                     encodeURIComponent(`${namespace}:${short_name}:${item}`)
                   }
-                  className="flex text-black hover:text-primary-blue"
+                  className="hover:no-underline flex text-black hover:text-primary-blue"
                 >
                   {valueStats !== {} ? <StatItem text={item} value={value} /> : <>{`${item}`}</>}
                 </Link>
@@ -284,7 +284,7 @@ const Taxonomy = (props) => {
       <AiidHelmet metaTitle={'Taxonomy: ' + namespace} path={props.location.pathname} />
 
       <div className={'titleWrapper'}>
-        <h1 className="font-karla font-bold flex-1 pt-0">{namespace}</h1>
+        <h1>{namespace}</h1>
       </div>
       <Markdown className="taxonomy-markdown">{description}</Markdown>
       <h2 className="heading1">Taxonomy Fields</h2>
