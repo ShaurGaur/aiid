@@ -83,7 +83,7 @@ const DataPoint = ({ bucket, groupRadius, radius, yScale, setTooltipPosition }) 
               {b.isOccurrence ? (
                 <p className="whitespace-nowrap m-0">{b.title}</p>
               ) : (
-                <a href={`#r${b.report_number}`} className="hover:no-underline whitespace-nowrap">
+                <a href={`#r${b.report_number}`} className="whitespace-nowrap">
                   {b.title}
                 </a>
               )}
@@ -131,7 +131,7 @@ const DataPoint = ({ bucket, groupRadius, radius, yScale, setTooltipPosition }) 
           <text
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-white font-bold text-xs z-40"
+            className="fill-white font-bold text-[12px] z-40"
           >
             +{bucket.length - 1}
           </text>
@@ -145,7 +145,7 @@ const DataPoint = ({ bucket, groupRadius, radius, yScale, setTooltipPosition }) 
             }}
             ref={fORef}
           >
-            <div className="w-4 h-4 cursor-pointer" />
+            <div className="w-[16px] h-[16px] cursor-pointer" />
           </foreignObject>
         </>
       ) : (
@@ -165,7 +165,7 @@ const DataPoint = ({ bucket, groupRadius, radius, yScale, setTooltipPosition }) 
       {bucket[0].isOccurrence ? (
         <text
           dominantBaseline="middle"
-          className={`text-sm ${bucket[0].isResponse ? 'fill-green-700' : ''}`}
+          className={`text-[14px] ${bucket[0].isResponse ? 'fill-green-700' : ''}`}
           dx={16}
           data-cy={`timeline-text-${bucket[0].isResponse ? 'response' : 'occurrence'}`}
         >
@@ -178,15 +178,10 @@ const DataPoint = ({ bucket, groupRadius, radius, yScale, setTooltipPosition }) 
           )}
         </text>
       ) : (
-        <a
-          href={bucket[0].mongodb_id ? `#r${bucket[0].report_number}` : ''}
-          className="hover:no-underline"
-        >
+        <a href={bucket[0].mongodb_id ? `#r${bucket[0].report_number}` : ''}>
           <text
             dominantBaseline="middle"
-            className={`text-[14px] hover:fill-blue-500 ${
-              bucket[0].isResponse ? 'fill-green-700' : ''
-            }`}
+            className={`text-[14px] ${bucket[0].isResponse ? 'fill-green-700' : ''}`}
             dx={16}
             data-cy={`timeline-text-${bucket[0].isResponse ? 'response' : 'occurrence'}`}
           >

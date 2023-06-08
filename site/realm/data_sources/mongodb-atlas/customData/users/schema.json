@@ -3,12 +3,6 @@
         "_id": {
             "bsonType": "objectId"
         },
-        "first_name": {
-            "bsonType": "string"
-        },
-        "last_name": {
-            "bsonType": "string"
-        },
         "roles": {
             "bsonType": "array",
             "items": {

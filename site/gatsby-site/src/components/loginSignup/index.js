@@ -57,7 +57,6 @@ const Subscriptions = () => {
         href={localizePath({ path: '/account/' })}
         size={'sm'}
         data-cy="account-btn"
-        className="hover:no-underline"
       >
         <Trans ns="login">Your Account</Trans>
       </Button>

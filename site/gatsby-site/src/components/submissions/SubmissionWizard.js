@@ -1,25 +1,13 @@
 import useToastContext, { SEVERITY } from 'hooks/useToast';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { getCloudinaryPublicID } from 'utils/cloudinary';
 import StepOne from '../forms/SubmissionWizard/StepOne';
 import StepTwo from '../forms/SubmissionWizard/StepTwo';
 import StepThree from '../forms/SubmissionWizard/StepThree';
-import { useUserContext } from 'contexts/userContext';
 
-const SubmissionWizard = ({
-  submitForm,
-  initialValues,
-  urlFromQueryString,
-  submissionReset,
-  setSavingInLocalStorage,
-  scrollToTop,
-}) => {
+const SubmissionWizard = ({ submitForm, initialValues, urlFromQueryString }) => {
   const [data, setData] = useState(initialValues);
-
-  useEffect(() => {
-    setData({ ...initialValues });
-  }, [initialValues]);
 
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -30,6 +18,8 @@ const SubmissionWizard = ({
   const [submissionComplete, setSubmissionComplete] = useState(false);
 
   const [parsingNews, setParsingNews] = useState(false);
+
+  const stepsRef = useRef(null);
 
   const handleNextStep = async (newData, final = false) => {
     setSubmissionFailed(false);
@@ -51,20 +41,18 @@ const SubmissionWizard = ({
       setCurrentStep((prev) => prev + 1);
     }
 
-    scrollToTop();
+    stepsRef?.current?.scrollIntoView();
   };
 
   const handlePreviousStep = (newData) => {
     setData((prev) => ({ ...prev, ...newData }));
-    scrollToTop();
+    stepsRef?.current?.scrollIntoView();
     setCurrentStep((prev) => prev - 1);
   };
 
   const addToast = useToastContext();
 
   const { t } = useTranslation(['submit']);
-
-  const { loading, user } = useUserContext();
 
   const parseNewsUrl = useCallback(
     async (newsUrl) => {
@@ -96,16 +84,6 @@ const SubmissionWizard = ({
           url: newsUrl,
           cloudinary_id,
         };
-
-        if (!loading) {
-          if (user?.profile?.email) {
-            newValues.user = { link: user.id };
-
-            if (user.customData.first_name && user.customData.last_name) {
-              newValues.submitters = [`${user.customData.first_name} ${user.customData.last_name}`];
-            }
-          }
-        }
 
         for (const key of [
           'tags',
@@ -177,8 +155,6 @@ const SubmissionWizard = ({
         submissionFailed={submissionFailed}
         submissionComplete={submissionComplete}
         urlFromQueryString={urlFromQueryString}
-        submissionReset={submissionReset}
-        setSavingInLocalStorage={setSavingInLocalStorage}
       />,
       <StepTwo
         key={'submission-step-2'}
@@ -189,8 +165,6 @@ const SubmissionWizard = ({
         validateAndSubmitForm={validateAndSubmitForm}
         submissionFailed={submissionFailed}
         submissionComplete={submissionComplete}
-        submissionReset={submissionReset}
-        setSavingInLocalStorage={setSavingInLocalStorage}
       />,
       <StepThree
         key={'submission-step-3'}
@@ -198,18 +172,15 @@ const SubmissionWizard = ({
         previous={handlePreviousStep}
         data={data}
         name={t('Step 3 - Tell us more')}
-        validateAndSubmitForm={validateAndSubmitForm}
         submissionFailed={submissionFailed}
         submissionComplete={submissionComplete}
-        submissionReset={submissionReset}
-        setSavingInLocalStorage={setSavingInLocalStorage}
       />,
     ];
 
     setSteps(steps);
-  }, [data, submissionFailed, parsingNews, submissionComplete, submissionReset]);
+  }, [data, submissionFailed, parsingNews, submissionComplete]);
 
-  return <div>{steps[currentStep]}</div>;
+  return <div ref={stepsRef}>{steps[currentStep]}</div>;
 };
 
 export default SubmissionWizard;

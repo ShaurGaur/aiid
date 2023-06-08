@@ -47,7 +47,7 @@ export default function IncidentsTable({ data, isLiveData, setIsLiveData }) {
 
   const defaultColumn = React.useMemo(
     () => ({
-      className: 'min-w-[120px]',
+      className: 'w-[120px]',
       Filter: DefaultColumnFilter,
       Header: DefaultColumnHeader,
     }),
@@ -66,12 +66,12 @@ export default function IncidentsTable({ data, isLiveData, setIsLiveData }) {
         ),
       },
       {
-        className: 'min-w-[240px]',
+        className: 'w-[240px]',
         title: t('Title'),
         accessor: 'title',
       },
       {
-        className: 'min-w-[240px]',
+        className: 'w-[240px]',
         title: t('Description'),
         accessor: 'description',
       },
@@ -106,7 +106,7 @@ export default function IncidentsTable({ data, isLiveData, setIsLiveData }) {
       columns.push({
         title: t('Actions'),
         id: 'actions',
-        className: 'min-w-[120px]',
+        className: 'w-[120px]',
         Cell: ({ row: { values } }) => (
           <Button
             color={'gray'}

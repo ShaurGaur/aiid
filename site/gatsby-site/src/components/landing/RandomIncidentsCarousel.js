@@ -5,8 +5,6 @@ import { Image } from 'utils/cloudinary';
 import { fill } from '@cloudinary/base/actions/resize';
 import { Carousel } from 'flowbite-react';
 import { useTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 const RandomIncidentsCarousel = () => {
   return (
@@ -62,22 +60,7 @@ const RandomIncidentsCarousel = () => {
                 {/* The carousel insists on using rounded corners, *
                  * so we have to cover them up on top.            */}
               </div>
-              <Carousel
-                slideInterval={6000}
-                slide={false}
-                leftControl={
-                  <FontAwesomeIcon
-                    icon={faArrowCircleLeft}
-                    className="h-8 w-8 text-white bg-gray-500 shadow rounded-full"
-                  />
-                }
-                rightControl={
-                  <FontAwesomeIcon
-                    icon={faArrowCircleRight}
-                    className="h-8 w-8 text-white bg-gray-500 shadow rounded-full"
-                  />
-                }
-              >
+              <Carousel slideInterval={6000} slide={false}>
                 {selected.map(({ incident_id, title, media_url, cloudinary_id }) => (
                   <Link
                     to={`/cite/${incident_id}`}

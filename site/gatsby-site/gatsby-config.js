@@ -126,41 +126,18 @@ const plugins = [
       `,
       feeds: [
         {
-          serialize: ({ query: { allMongodbAiidprodReports, allMongodbAiidprodIncidents } }) => {
+          serialize: ({ query: { allMongodbAiidprodReports } }) => {
             return allMongodbAiidprodReports.edges.map((edge) => {
               const publicID = edge.node.cloudinary_id
                 ? edge.node.cloudinary_id
                 : `legacy/${md5(edge.node.media_url)}`;
 
-              const report_number = edge.node.report_number;
-
-              const matchingIncidents = allMongodbAiidprodIncidents.edges.find((incident) => {
-                return incident.node.reports.find((report) => {
-                  return report === report_number;
-                });
-              });
-
-              let incident_id = '';
-
-              if (matchingIncidents) {
-                incident_id = matchingIncidents.node.incident_id;
-              }
-
-              const dateSubmitted = new Date(edge.node.date_submitted).toUTCString();
-
-              const description = `${edge.node.plain_text.slice(0, 240)} ... ${
-                matchingIncidents
-                  ? '(https://incidentdatabase.ai/cite/' + incident_id + '#' + report_number + ')'
-                  : '(report_number: ' + report_number + ')'
-              }`;
-
               return Object.assign({}, edge.node.frontmatter, {
                 title: edge.node.title,
                 url: edge.node.url,
                 link: edge.node.url,
-                description: description,
+                description: edge.node.description,
                 guid: edge.node.id,
-                date: dateSubmitted,
                 enclosure: {
                   url: cloudinary.url(publicID, {
                     secure: true,
@@ -172,33 +149,23 @@ const plugins = [
               });
             });
           },
-          query: `{
-            allMongodbAiidprodReports(sort: {date_submitted: DESC}, limit: 100) {
-              totalCount
-              edges {
-                node {
-                  title
-                  url
-                  text
-                  plain_text
-                  id
-                  media_url
-                  cloudinary_id
-                  date_submitted
-                  report_number
+          query: `
+            {
+              allMongodbAiidprodReports(sort: {date_submitted: DESC}, limit: 100) {
+                totalCount
+                edges {
+                  node {
+                    title
+                    url
+                    description
+                    id
+                    media_url
+                    cloudinary_id
+                  }
                 }
               }
             }
-            allMongodbAiidprodIncidents(sort: {date: DESC}) {
-              totalCount
-              edges {
-                node {
-                  incident_id
-                  reports
-                }
-              }
-            }
-          }`,
+          `,
           output: '/rss.xml',
           title: 'AI Incident Database RSS Feed',
         },
@@ -255,6 +222,7 @@ const plugins = [
       },
     },
   },
+  'gatsby-plugin-sass',
 ];
 
 module.exports = {

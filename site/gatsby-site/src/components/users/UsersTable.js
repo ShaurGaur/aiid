@@ -42,14 +42,6 @@ export default function UsersTable({ data, className = '', ...props }) {
         accessor: 'userId',
       },
       {
-        title: 'First Name',
-        accessor: 'first_name',
-      },
-      {
-        title: 'Last Name',
-        accessor: 'last_name',
-      },
-      {
         title: 'Roles',
         accessor: 'roles',
         Cell: RolesCell,

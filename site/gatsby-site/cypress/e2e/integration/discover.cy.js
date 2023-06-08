@@ -21,8 +21,6 @@ describe('The Discover app', () => {
       .should('exist')
       .and('be.visible');
 
-    cy.waitForStableDOM();
-
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 28);
   });
 
@@ -38,12 +36,9 @@ describe('The Discover app', () => {
       .type('starbucks')
       .type('{enter}');
 
-    cy.waitForStableDOM();
-
     cy.url().should('include', 's=starbucks');
 
-    cy.waitForStableDOM();
-
+    // a flaky assertion here, should improve once a testing enviqronment is set up
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 8);
   });
 
@@ -65,8 +60,6 @@ describe('The Discover app', () => {
     cy.get('[data-cy="incident_id-item"]:contains("34")', { timeout: 8000 }).first().click();
 
     cy.url().should('include', 'incident_id=34');
-
-    cy.waitForStableDOM();
 
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 28);
   });
@@ -90,8 +83,6 @@ describe('The Discover app', () => {
 
     cy.url().should('include', 'language=es');
 
-    cy.waitForStableDOM();
-
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 4);
   });
 
@@ -113,8 +104,6 @@ describe('The Discover app', () => {
     cy.get('[data-cy="tags-item"]:contains("response")', { timeout: 8000 }).first().click();
 
     cy.url().should('include', 'tags=response');
-
-    cy.waitForStableDOM();
 
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 1);
   });
@@ -141,8 +130,6 @@ describe('The Discover app', () => {
       .should('contain.text', '1');
 
     cy.url().should('include', 'incident_id=10');
-
-    cy.waitForStableDOM();
 
     cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 8);
   });
@@ -186,23 +173,6 @@ describe('The Discover app', () => {
     cy.get('@modal').should('not.exist');
   });
 
-  it('Should NOT have a video player for incidents without video URLs', () => {
-    cy.visit(
-      url +
-        '?display=details&incident_id=10&s=%E2%80%8BIs%20Starbucks%20shortchanging%20its%20baristas%3F'
-    );
-
-    cy.get('[data-cy="video-player"]').should('not.exist');
-  });
-
-  // Only use when there are reports with video in production DB.
-  it.skip('Should HAVE a video player for incidents WITH video URLs', () => {
-    // Replace the discover search term with a valid report search for a video URL.
-    cy.visit(url + '?display=details&incident_id=10&s=olive%20oil');
-
-    cy.get('[data-cy="video-player"]').should('exist');
-  });
-
   it('Opens an archive link', () => {
     cy.visit(url, {
       onBeforeLoad: (win) => {
@@ -227,7 +197,7 @@ describe('The Discover app', () => {
     cy.get('@windowOpen').should('be.called');
   });
 
-  it('Lets you filter by type', () => {
+  it("Let's you filter by type", () => {
     cy.visit(url);
 
     cy.waitForStableDOM();
@@ -393,18 +363,12 @@ describe('The Discover app', () => {
   it(`Shouldn't export results to a CSV file if no results are displayed`, () => {
     cy.visit(url);
 
-    cy.waitForStableDOM();
-
     cy.get('form#searchForm').as('form');
-
-    cy.waitForStableDOM();
 
     cy.get('@form')
       .get('[data-cy="search-box"] input[placeholder="Type Here"]')
-      .type('xxxxxxxxxxxxx', { waitForAnimations: false })
-      .type('{enter}', { waitForAnimations: false });
-
-    cy.waitForStableDOM();
+      .type('xxxxxxxxxxxxx')
+      .type('{enter}');
 
     cy.url().should('include', 's=xxxxxxxxxxxxx');
 
@@ -436,46 +400,5 @@ describe('The Discover app', () => {
 
       cy.get(`[data-cy-report-number="${report_number}"]`).should('be.visible');
     }
-  });
-
-  it('Performs a search and filters results by source', () => {
-    cy.visit(url);
-
-    cy.waitForStableDOM();
-
-    cy.get('form#searchForm').as('form');
-
-    // Search by text first
-    cy.get('@form')
-      .get('[data-cy="search-box"] input[placeholder="Type Here"]')
-      .type('google')
-      .type('{enter}');
-
-    cy.waitForStableDOM();
-
-    cy.url().should('include', 's=google');
-
-    // Filter by source
-    cy.get('[data-cy=expand-filters]').click();
-
-    cy.waitForStableDOM();
-
-    cy.contains('button', 'Source').click();
-
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="source_domain"] [placeholder="Type Here"]', { timeout: 8000 })
-      .type('theguardian.com')
-      .type('{enter}');
-
-    cy.get('[data-cy="source_domain-item"]:contains("theguardian.com")', { timeout: 8000 })
-      .first()
-      .click();
-
-    cy.url().should('include', 'source_domain=theguardian.com');
-
-    cy.waitForStableDOM();
-
-    cy.get('div[class^="tw-hits-container"]').children().should('have.length.at.least', 8);
   });
 });

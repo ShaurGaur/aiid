@@ -1,14 +1,12 @@
 import React from 'react';
 import AiidHelmet from 'components/AiidHelmet';
 import Layout from 'components/Layout';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Container from '../elements/Container';
 import SocialShareButtons from '../components/ui/SocialShareButtons';
 import { useLocalization } from 'plugins/gatsby-theme-i18n';
 import { graphql } from 'gatsby';
 import ReportCard from 'components/reports/ReportCard';
-import { Button } from 'flowbite-react';
-import { useUserContext } from 'contexts/userContext';
 
 function ReportPage(props) {
   const {
@@ -19,8 +17,6 @@ function ReportPage(props) {
   const { t } = useTranslation();
 
   const { locale } = useLocalization();
-
-  const { loading, isRole } = useUserContext();
 
   if (report.language !== locale) {
     report.title = data[locale].title;
@@ -34,22 +30,6 @@ function ReportPage(props) {
   const metaDescription = report.description;
 
   const metaImage = report.media_url;
-
-  let actions = <></>;
-
-  if (!loading && isRole('incident_editor')) {
-    actions = (
-      <Button
-        data-cy="edit-report"
-        size={'xs'}
-        color="light"
-        href={`/cite/edit?report_number=${report.report_number}`}
-        className="hover:no-underline "
-      >
-        <Trans>Edit</Trans>
-      </Button>
-    );
-  }
 
   return (
     <Layout {...props}>
@@ -67,7 +47,7 @@ function ReportPage(props) {
       </div>
 
       <Container>
-        <ReportCard item={report} alwaysExpanded={true} actions={actions} />
+        <ReportCard item={report} alwaysExpanded={true} />
       </Container>
     </Layout>
   );

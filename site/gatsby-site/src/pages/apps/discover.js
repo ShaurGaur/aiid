@@ -204,10 +204,7 @@ function DiscoverApp(props) {
   const onSearchStateChange = (searchState) => {
     searchState = cleanSearchState(searchState);
 
-    const newHasOnlyDefaultValues =
-      difference(Object.keys(searchState.refinementList), DEFAULT_SEARCH_KEYS_VALUES).length === 0;
-
-    if (!newHasOnlyDefaultValues) {
+    if (!hasOnlyDefaultValues) {
       searchState.sortBy = searchState.sortBy.replace('-featured', '');
     } else {
       searchState.sortBy =
@@ -217,8 +214,6 @@ function DiscoverApp(props) {
           : searchState.sortBy;
     }
     setSearchState({ ...searchState });
-
-    setHasOnlyDefaultValues(newHasOnlyDefaultValues);
   };
 
   const cleanSearchState = (sState) => {

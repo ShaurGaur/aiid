@@ -1,15 +1,13 @@
 import React from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { Alert, Modal } from 'flowbite-react';
+import { Modal } from 'flowbite-react';
 import { Formik } from 'formik';
 import { Trans } from 'react-i18next';
 import UserForm, { schema } from './UserForm';
-import { FIND_USER, UPDATE_USER_PROFILE, UPDATE_USER_ROLES } from '../../graphql/users';
+import { FIND_USER, UPDATE_USER_ROLES } from '../../graphql/users';
 import DefaultSkeleton from 'elements/Skeletons/Default';
 import SubmitButton from 'components/ui/SubmitButton';
 import useToastContext, { SEVERITY } from 'hooks/useToast';
-import lodash from 'lodash';
-import { useUserContext } from 'contexts/userContext';
 
 const supportedRoles = [
   { name: 'admin', description: 'All permissions' },
@@ -49,34 +47,18 @@ const RolesTable = ({ roles }) => (
   </table>
 );
 
-export default function UserEditModal({ onClose, userId, alertTitle = '', alertText = '' }) {
+export default function UserEditModal({ onClose, userId }) {
   const { data: userData, loading } = useQuery(FIND_USER, {
     variables: { query: { userId } },
   });
 
-  const { user, isRole } = useUserContext();
-
   const [updateUserRoles] = useMutation(UPDATE_USER_ROLES);
-
-  const [updateUserProfile] = useMutation(UPDATE_USER_PROFILE);
 
   const addToast = useToastContext();
 
   const handleSubmit = async (values) => {
     try {
-      if (!lodash.isEqual(values.roles, userData.user.roles)) {
-        await updateUserRoles({ variables: { roles: values.roles, userId } });
-      }
-
-      await updateUserProfile({
-        variables: {
-          userId,
-          first_name: values.first_name,
-          last_name: values.last_name,
-        },
-      });
-
-      await user.refreshCustomData();
+      await updateUserRoles({ variables: { roles: values.roles, userId } });
 
       addToast({
         message: <>User updated.</>,
@@ -87,7 +69,7 @@ export default function UserEditModal({ onClose, userId, alertTitle = '', alertT
     } catch (e) {
       addToast({
         message: <>Error updating user.</>,
-        severity: SEVERITY.danger,
+        severity: SEVERITY.console.error(),
         error: e,
       });
     }
@@ -96,7 +78,7 @@ export default function UserEditModal({ onClose, userId, alertTitle = '', alertT
   return (
     <Modal show={true} onClose={onClose} data-cy="edit-user-modal" size="lg">
       <Modal.Header>
-        <Trans>Edit</Trans>
+        <Trans ns="admin">Edit User</Trans>
       </Modal.Header>
 
       {loading && (
@@ -114,21 +96,13 @@ export default function UserEditModal({ onClose, userId, alertTitle = '', alertT
           {({ isSubmitting, isValid, submitForm }) => (
             <>
               <Modal.Body>
-                {(alertTitle || alertText) && (
-                  <Alert color="info" className="mb-4">
-                    <h5>{alertTitle}</h5>
-                    <span>{alertText}</span>
-                  </Alert>
-                )}
                 <UserForm />
-                {isRole('admin') && (
-                  <details>
-                    <summary className="cursor-pointer text-sm">Supported Roles</summary>
-                    <div className="mt-2">
-                      <RolesTable roles={supportedRoles} />
-                    </div>
-                  </details>
-                )}
+                <details>
+                  <summary className="cursor-pointer text-sm">Supported Roles</summary>
+                  <div className="mt-2">
+                    <RolesTable roles={supportedRoles} />
+                  </div>
+                </details>
               </Modal.Body>
               <Modal.Footer>
                 <SubmitButton

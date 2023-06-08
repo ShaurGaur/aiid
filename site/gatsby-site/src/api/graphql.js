@@ -3,10 +3,17 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import fetch from 'cross-fetch';
 import { print } from 'graphql';
 import Cors from 'cors';
-import siteConfig from '../../config';
-import { createHandler } from 'graphql-http/lib/use/express';
+import config from '../../config';
+import BodyParser from 'body-parser';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+
+const plugins = [ApolloServerPluginLandingPageLocalDefault({ embed: true })];
 
 const cors = Cors();
+
+const bodyParser = BodyParser.json();
 
 // This custom executor is used to execute GraphQL queries against the Realm API
 // https://www.graphql-tools.com/docs/schema-wrapping#schema-wrapping
@@ -15,11 +22,11 @@ async function realmExecutor({ document, variables }) {
   const query = print(document);
 
   const fetchResult = await fetch(
-    `https://realm.mongodb.com/api/client/v2.0/app/${siteConfig.realm.production_db.realm_app_id}/graphql`,
+    `https://realm.mongodb.com/api/client/v2.0/app/${config.realm.production_db.realm_app_id}/graphql`,
     {
       method: 'POST',
       headers: {
-        apiKey: siteConfig.realm.graphqlApiKey,
+        apiKey: config.realm.graphqlApiKey,
       },
       body: JSON.stringify({ query, variables }),
     }
@@ -59,7 +66,11 @@ export default async function handler(req, res) {
       },
     });
 
-    graphqlMiddleware = createHandler({ schema: gatewaySchema });
+    const server = new ApolloServer({ schema: gatewaySchema, plugins, introspection: true });
+
+    await server.start();
+
+    graphqlMiddleware = expressMiddleware(server);
   }
 
   // Manually run the cors middleware
@@ -67,6 +78,15 @@ export default async function handler(req, res) {
 
   await new Promise((resolve, reject) => {
     cors(req, res, (result) => {
+      if (result instanceof Error) {
+        reject(result);
+      }
+      resolve(result);
+    });
+  });
+
+  await new Promise((resolve, reject) => {
+    bodyParser(req, res, (result) => {
       if (result instanceof Error) {
         reject(result);
       }
