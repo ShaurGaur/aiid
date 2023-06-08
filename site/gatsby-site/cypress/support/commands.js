@@ -22,7 +22,7 @@ const loginSteps = (email, password) => {
 
   cy.get('[data-cy="login-btn"]').click();
 
-  return cy.location('pathname', { timeout: 8000 }).should('not.equal', '/login/');
+  return cy.location('pathname', { timeout: 8000 }).should('eq', '/');
 };
 
 Cypress.Commands.add('login', (email, password, options = { skipSession: false }) => {

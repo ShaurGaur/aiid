@@ -73,7 +73,8 @@ describe('The Submit form', () => {
         authors: ['Valentina Palladino'],
         incident_date: '2020-01-01',
         date_published: '2017-11-10',
-        media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+        image_url:
+          'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
         tags: ['New Tag'],
         incident_ids: [],
         text: "## Recent news stories and blog\n\nposts _highlighted_ the underbelly of YouTube Kids, Google's children-friendly version. This is more text to reach the 256 charactrs minimum, becuase otherwise the text by similarity component doesnt fetch, which surprisingly is way more character that I initially imagined when I started writing this.",
@@ -141,7 +142,8 @@ describe('The Submit form', () => {
         title: 'YouTube to crack down on inappropriate content masked as kids’ cartoons',
         authors: ['Valentina Palladino'],
         date_published: '2017-11-10',
-        media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+        image_url:
+          'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
         incident_ids: [],
         text: "## Recent news stories and blog\n\nposts _highlighted_ the underbelly of YouTube Kids, Google's children-friendly version. This is more text to reach the 256 charactrs minimum, becuase otherwise the text by similarity component doesnt fetch, which surprisingly is way more character that I initially imagined when I started writing this.",
         plain_text:
@@ -195,6 +197,8 @@ describe('The Submit form', () => {
 
       cy.get('[data-cy="to-step-2"]').click();
 
+      cy.get('input[name="submitters"]').type('Something');
+
       cy.get('[name="language"]').select('Spanish');
 
       cy.get('[data-cy="to-step-3"]').click();
@@ -214,13 +218,14 @@ describe('The Submit form', () => {
       cy.wait('@insertSubmission').then((xhr) => {
         expect(xhr.request.body.variables.submission).to.deep.nested.include({
           title: 'YouTube to crack down on inappropriate content masked as kids’ cartoons',
-          submitters: ['Test User'],
+          submitters: ['Something'],
           authors: ['Valentina Palladino'],
           incident_date: '2020-01-01',
           incident_editors: ['Sean McGregor', 'Khoa Lam'],
           incident_title: 'Elsagate',
           date_published: '2017-11-10',
-          media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+          image_url:
+            'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
           tags: ['New Tag'],
           incident_ids: [],
           text: "## Recent news stories and blog\n\nposts _highlighted_ the underbelly of YouTube Kids, Google's children-friendly version. This is more text to reach the 256 charactrs minimum, becuase otherwise the text by similarity component doesnt fetch, which surprisingly is way more character that I initially imagined when I started writing this.",
@@ -232,8 +237,6 @@ describe('The Submit form', () => {
           editor_notes: 'Here are some notes',
           description: 'Description',
         });
-
-        expect(xhr.request.body.variables.submission.user.link).to.not.be.undefined;
       });
 
       cy.get('.tw-toast')
@@ -294,7 +297,8 @@ describe('The Submit form', () => {
               authors: ['Valentina Palladino'],
               incident_date: '2021-09-21',
               date_published: '2017-11-10',
-              media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+              image_url:
+                'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
               tags: ['New Tag'],
               incident_ids: [1],
               url: `https://www.arstechnica.com/gadgets/2017/11/youtube-to-crack-down-on-inappropriate-content-masked-as-kids-cartoons/`,
@@ -370,8 +374,10 @@ describe('The Submit form', () => {
         submitters: ['Anonymous'],
         authors: ['Valentina Palladino'],
         date_published: '2017-11-10',
-        media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
-        cloudinary_id: 'reports/www.youtube.com/watch?v=cQ54GDm1eL0',
+        image_url:
+          'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
+        cloudinary_id:
+          'reports/cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
         tags: ['New Tag'],
         incident_ids: [1],
         url: `https://www.arstechnica.com/gadgets/2017/11/youtube-to-crack-down-on-inappropriate-content-masked-as-kids-cartoons/`,
@@ -400,7 +406,8 @@ describe('The Submit form', () => {
       authors: 'Valentina Palladino',
       incident_date: '2021-09-21',
       date_published: '2017-11-10',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url:
+        'https://cdn.arstechnica.net/wp-content/uploads/2017/11/Screen-Shot-2017-11-10-at-9.25.47-AM-760x380.png',
       incident_ids: [1],
       url: `https://www.arstechnica.com/gadgets/2017/11/youtube-to-crack-down-on-inappropriate-content-masked-as-kids-cartoons/`,
       source_domain: 'arstechnica.com',
@@ -446,7 +453,7 @@ describe('The Submit form', () => {
       incident_date: '2022-01-01',
       date_published: '2021-01-02',
       date_downloaded: '2021-01-03',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url: 'https://test.com/image.jpg',
       incident_ids: [1],
       text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
       tags: 'test tag',
@@ -458,15 +465,10 @@ describe('The Submit form', () => {
     cy.intercept('GET', parserURL, {
       title: 'test title',
       authors: 'test author',
-      submitters: 'test submitter',
       date_published: '2021-01-02',
       date_downloaded: '2021-01-03',
-      incident_date: '2022-01-01',
-      incident_ids: [1],
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url: 'https://test.com/image.jpg',
       text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
-      tags: 'test tag',
-      editor_notes: 'Here are some notes',
     }).as('parseNews');
 
     cy.conditionalIntercept(
@@ -526,104 +528,9 @@ describe('The Submit form', () => {
         plain_text:
           'Sit quo accusantium\n\nquia assumenda. Quod delectus similique labore optio quaease\n',
         source_domain: `test.com`,
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
+        cloudinary_id: `reports/test.com/image.jpg`,
         editor_notes: 'Here are some notes',
       });
-
-      expect(xhr.request.body.variables.submission.user).to.be.undefined;
-    });
-  });
-
-  maybeIt('Should submit a submission and link it to the current user id', () => {
-    cy.login(Cypress.env('e2eUsername'), Cypress.env('e2ePassword'));
-
-    const values = {
-      url: 'https://test.com',
-      title: 'test title',
-      authors: 'test author',
-      incident_date: '2022-01-01',
-      date_published: '2021-01-02',
-      date_downloaded: '2021-01-03',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
-      incident_ids: [1],
-      text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
-      tags: 'test tag',
-      editor_notes: 'Here are some notes',
-    };
-
-    const params = new URLSearchParams(values);
-
-    cy.intercept('GET', parserURL, {
-      title: 'test title',
-      authors: 'test author',
-      date_published: '2021-01-02',
-      date_downloaded: '2021-01-03',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
-      text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
-    }).as('parseNews');
-
-    cy.conditionalIntercept(
-      '**/graphql',
-      (req) => req.body.operationName == 'InsertSubmission',
-      'insertSubmission',
-      {
-        data: {
-          insertOneSubmission: { __typename: 'Submission', _id: '6272f2218933c7a9b512e13b' },
-        },
-      }
-    );
-
-    cy.conditionalIntercept(
-      '**/graphql',
-      (req) => req.body.operationName == 'FindIncidentsTitles',
-      'FindIncidentsTitles',
-      {
-        data: {
-          incidents: [
-            {
-              __typename: 'Incident',
-              incident_id: 1,
-              title: 'Test title',
-              date: '2022-01-01',
-            },
-          ],
-        },
-      }
-    );
-
-    cy.visit(url + `?${params.toString()}`);
-
-    cy.wait('@FindIncidentsTitles');
-
-    cy.get('.form-has-errors').should('not.exist');
-
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="to-step-2"]').click();
-
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="to-step-3"]').click();
-
-    cy.waitForStableDOM();
-
-    cy.get('button[type="submit"]').click();
-
-    cy.wait('@insertSubmission').then((xhr) => {
-      expect(xhr.request.body.variables.submission).to.deep.nested.include({
-        ...values,
-        incident_ids: [1],
-        authors: [values.authors],
-        submitters: ['Test User'],
-        tags: [values.tags],
-        plain_text:
-          'Sit quo accusantium\n\nquia assumenda. Quod delectus similique labore optio quaease\n',
-        source_domain: `test.com`,
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
-        editor_notes: 'Here are some notes',
-      });
-
-      expect(xhr.request.body.variables.submission.user.link).to.not.be.undefined;
     });
   });
 
@@ -844,8 +751,6 @@ describe('The Submit form', () => {
 
     cy.get('[data-cy="no-related-reports"]').should('be.visible');
 
-    cy.waitForStableDOM();
-
     cy.get('[data-cy="result"]').should('not.exist');
   });
 
@@ -906,10 +811,10 @@ describe('The Submit form', () => {
 
     cy.get('[data-cy="to-step-2"]').click();
 
-    cy.get('[data-cy="image-preview-figure"]').should('exist');
+    cy.get('[data-cy="image-preview-figure"] canvas').should('exist');
   });
 
-  it('Should update video thumbnail when url is typed', () => {
+  it('Should update preview image when url is typed', () => {
     const values = {
       url: 'https://test.com',
       title: 'test title',
@@ -929,12 +834,12 @@ describe('The Submit form', () => {
 
     cy.wait('@parseNews');
 
-    const videoId = 'cQ54GDm1eL0';
+    const suffix = 'github.com/favicon.ico';
 
-    const mediaUrl = 'https://www.youtube.com/watch?v=' + videoId;
+    const newImageUrl = 'https://' + suffix;
 
     const cloudinaryImageUrl =
-      'https://res.cloudinary.com/pai/image/youtube/d_fallback.jpg/f_auto/q_auto/' + videoId;
+      'https://res.cloudinary.com/pai/image/upload/f_auto/q_auto/v1/reports/' + suffix;
 
     cy.setEditorText(
       `Recent news stories and blog posts highlighted the underbelly of YouTube Kids, Google's children-friendly version of the wide world of YouTube. While all content on YouTube Kids is meant to be suitable for children under the age of 13, some inappropriate videos using animations, cartoons, and child-focused keywords manage to get past YouTube's algorithms and in front of kids' eyes. Now, YouTube will implement a new policy in an attempt to make the whole of YouTube safer: it will age-restrict inappropriate videos masquerading as children's content in the main YouTube app.`
@@ -946,7 +851,7 @@ describe('The Submit form', () => {
 
     cy.get('[data-cy="to-step-2"]').click();
 
-    cy.get('input[name=media_url]').scrollIntoView().type(mediaUrl);
+    cy.get('input[name=image_url]').scrollIntoView().type(newImageUrl);
 
     cy.get('[data-cy=image-preview-figure] img', { timeout: 30000 })
       .scrollIntoView()
@@ -980,7 +885,7 @@ describe('The Submit form', () => {
 
     const valuesStep2 = {
       submitters: 'test submitter',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url: 'https://test.com/image.jpg',
     };
 
     for (const key in valuesStep2) {
@@ -1177,7 +1082,7 @@ describe('The Submit form', () => {
       incident_date: '2022-01-01',
       date_published: '2021-01-02',
       date_downloaded: '2021-01-03',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url: 'https://test.com/image.jpg',
       incident_ids: [1],
       text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
       tags: 'response',
@@ -1249,7 +1154,7 @@ describe('The Submit form', () => {
         plain_text:
           'Sit quo accusantium\n\nquia assumenda. Quod delectus similique labore optio quaease\n',
         source_domain: `test.com`,
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
+        cloudinary_id: `reports/test.com/image.jpg`,
         editor_notes: 'Here are some notes',
       });
     });
@@ -1424,7 +1329,7 @@ describe('The Submit form', () => {
 
     const valuesStep2 = {
       submitters: 'test submitter',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
+      image_url: 'https://test.com/image.jpg',
     };
 
     for (const key in valuesStep2) {
@@ -1460,7 +1365,7 @@ describe('The Submit form', () => {
         plain_text:
           'Sit quo accusantium quia assumenda. Quod delectus similique labore optio quaease\n',
         source_domain: `test.com`,
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
+        cloudinary_id: `reports/test.com/image.jpg`,
         editor_notes: 'Here are some notes',
       });
     });
@@ -1543,209 +1448,5 @@ describe('The Submit form', () => {
     cy.get('input[name="url"]').type(`https://skylightcyber.com/2019/07/18/cylance-i-kill-you/`);
 
     cy.get('@parseNewsSpy').should('have.been.calledOnce');
-  });
-
-  it('Should load from localstorage', () => {
-    const values = {
-      url: 'https://test.com',
-      authors: ['test author'],
-      title: 'test title',
-      date_published: '2021-01-02',
-      date_downloaded: '2021-01-03',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
-      incident_ids: [1],
-      text: '## Sit quo accusantium \n\n quia **assumenda**. Quod delectus similique labore optio quaease',
-      submitters: ['test submitters'],
-      tags: ['test tags'],
-      source_domain: `test.com`,
-      cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
-      editor_notes: 'Here are some notes',
-    };
-
-    cy.visit(url, {
-      onBeforeLoad: function (window) {
-        window.localStorage.setItem('formValues', JSON.stringify(values));
-      },
-    });
-
-    cy.conditionalIntercept(
-      '**/graphql',
-      (req) => req.body.operationName == 'InsertSubmission',
-      'insertSubmission',
-      {
-        data: {
-          insertOneSubmission: { __typename: 'Submission', _id: '6272f2218933c7a9b512e13b' },
-        },
-      }
-    );
-
-    cy.intercept('GET', parserURL).as('parseNews');
-
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="submit-step-1"]').click();
-
-    cy.wait('@insertSubmission').then((xhr) => {
-      expect(xhr.request.body.variables.submission).to.deep.nested.include({
-        ...values,
-        incident_ids: [1],
-        authors: values.authors,
-        submitters: values.submitters,
-        tags: values.tags,
-        plain_text:
-          'Sit quo accusantium\n\nquia assumenda. Quod delectus similique labore optio quaease\n',
-        source_domain: `test.com`,
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
-        editor_notes: 'Here are some notes',
-      });
-    });
-  });
-
-  it('Should save form data in local storage', () => {
-    cy.visit(url);
-
-    const valuesStep1 = {
-      url: 'https://test.com',
-      title: 'test title',
-      authors: 'test author',
-      date_published: '2021-01-02',
-      date_downloaded: '2021-01-03',
-      incident_date: '2020-01-01',
-    };
-
-    for (const key in valuesStep1) {
-      if (key == 'incident_ids') {
-        cy.get(`input[name="${key}"]`).type(valuesStep1[key]);
-
-        cy.waitForStableDOM();
-
-        cy.get(`[role="option"]`).first().click();
-      } else {
-        cy.get(`[name="${key}"]`).type(valuesStep1[key]);
-      }
-    }
-
-    cy.waitForStableDOM();
-
-    cy.setEditorText(
-      'Sit quo accusantium quia assumenda. Quod delectus similique labore optio quaease'
-    );
-    cy.clickOutside();
-
-    cy.get('.form-has-errors').should('not.exist');
-
-    cy.get('[data-cy="to-step-2"]').click();
-
-    const valuesStep2 = {
-      submitters: 'test submitter',
-      media_url: 'https://www.youtube.com/watch?v=cQ54GDm1eL0',
-      language: 'en',
-    };
-
-    for (const key in valuesStep2) {
-      cy.get(`[name="${key}"]`).type(valuesStep2[key]);
-    }
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="to-step-3"]').click();
-
-    const valuesStep3 = {
-      developers: 'test developer',
-      deployers: 'test deployer',
-      harmed_parties: 'test harmed_parties',
-      editor_notes: 'Here are some notes',
-    };
-
-    for (const key in valuesStep3) {
-      cy.get(`[name="${key}"]`).type(valuesStep3[key]);
-    }
-    cy.waitForStableDOM();
-
-    cy.getAllLocalStorage().then((result) => {
-      const formValues = JSON.parse(
-        result[Cypress.config().baseUrl.replace(/\/$/, '')].formValues.toString()
-      );
-
-      expect(formValues).to.deep.equal({
-        ...valuesStep1,
-        ...valuesStep2,
-        ...valuesStep3,
-        authors: [valuesStep1.authors],
-        submitters: [valuesStep2.submitters],
-        tags: [],
-        developers: [valuesStep3.developers],
-        deployers: [valuesStep3.deployers],
-        harmed_parties: [valuesStep3.harmed_parties],
-        nlp_similar_incidents: [],
-        cloudinary_id: `reports/www.youtube.com/watch?v=cQ54GDm1eL0`,
-        text: 'Sit quo accusantium quia assumenda. Quod delectus similique labore optio quaease',
-        incident_ids: [],
-      });
-    });
-  });
-
-  it('Should clear form', () => {
-    cy.intercept('GET', parserURL, parseNews).as('parseNews');
-
-    const values = {
-      url: 'https://test.com',
-      authors: 'test author',
-      title: 'test title',
-      date_published: '2021-01-02',
-      incident_ids: [1],
-    };
-
-    cy.conditionalIntercept(
-      '**/graphql',
-      (req) => req.body.operationName == 'InsertSubmission',
-      'insertSubmission',
-      {
-        data: {
-          insertOneSubmission: { __typename: 'Submission', _id: '6272f2218933c7a9b512e13b' },
-        },
-      }
-    );
-
-    const params = new URLSearchParams(values);
-
-    cy.visit(url + `?${params.toString()}`);
-
-    cy.waitForStableDOM();
-
-    cy.get('[data-cy="clear-form"]').click();
-
-    cy.waitForStableDOM();
-
-    for (const key in values) {
-      cy.get(`input[name="${key}"]`).should('have.value', '');
-    }
-  });
-
-  it('Should display an error message if Date Published is not in the past', () => {
-    cy.visit(url);
-
-    cy.waitForStableDOM();
-
-    cy.get('input[name=date_published]').type('3000-01-01');
-
-    cy.contains('button', 'Submit').click();
-
-    cy.get('form').contains('*Date must be in the past').should('exist');
-
-    cy.contains('Please review. Some data is missing.').should('exist');
-  });
-
-  it('Should display an error message if Date Downloaded is not in the past', () => {
-    cy.visit(url);
-
-    cy.waitForStableDOM();
-
-    cy.get('input[name=date_downloaded]').type('3000-01-01');
-
-    cy.contains('button', 'Submit').click();
-
-    cy.get('form').contains('*Date must be in the past').should('exist');
-
-    cy.contains('Please review. Some data is missing.').should('exist');
   });
 });

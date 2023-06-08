@@ -4,8 +4,13 @@
     "location": "US-VA",
     "deployment_model": "GLOBAL",
     "allowed_request_origins": [
+        "http://localhost",
         "http://localhost:8000",
         "http://localhost:8080",
+        "https://localhost:8000",
+        "http://34.73.168.38",
+        "https://34.73.168.38",
+        "http://localhost:9000",
         "https://incidentdatabase.ai",
         "https://173.205.94.96",
         "http://173.205.94.96",

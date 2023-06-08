@@ -91,7 +91,6 @@ export default function CommonEntities() {
                 lg:flex-col
                 xl:flex-row 
                 relative
-                hover:no-underline
               "
             >
               <div className="shrink-0 w-1/4 lg:w-full xl:w-1/4">

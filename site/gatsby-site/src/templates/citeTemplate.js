@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { Badge, Button } from 'flowbite-react';
+import { Badge } from 'flowbite-react';
 import { Trans, useTranslation } from 'react-i18next';
-import { LocalizedLink, useLocalization } from 'plugins/gatsby-theme-i18n';
+import { useLocalization } from 'plugins/gatsby-theme-i18n';
 import { useMutation, useQuery } from '@apollo/client';
 import ImageCarousel from 'components/cite/ImageCarousel';
 import Timeline from '../components/visualizations/Timeline';
@@ -14,10 +14,10 @@ import Card from '../elements/Card';
 import Container from '../elements/Container';
 import Row from '../elements/Row';
 import Col from '../elements/Col';
+import Pagination from '../elements/Pagination';
 import SocialShareButtons from '../components/ui/SocialShareButtons';
 import useLocalizePath from '../components/i18n/useLocalizePath';
 import { FIND_USER_SUBSCRIPTIONS, UPSERT_SUBSCRIPTION } from '../graphql/subscriptions';
-import { GET_LATEST_INCIDENT_ID, INSERT_INCIDENT } from '../graphql/incidents';
 import useToastContext, { SEVERITY } from '../hooks/useToast';
 import Link from 'components/ui/Link';
 import { getTaxonomies } from 'utils/cite';
@@ -29,8 +29,6 @@ import { useQueryParams, StringParam, withDefault } from 'use-query-params';
 import Tools from 'components/cite/Tools';
 import { isVideo } from 'utils/video';
 import VideoPlayerCard from 'components/cite/VideoPlayerCard';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 function CiteTemplate({
   incident,
@@ -50,7 +48,7 @@ function CiteTemplate({
   liveVersion = false,
   setIsLiveData,
 }) {
-  const { loading, isRole, user } = useUserContext();
+  const { isRole, user } = useUserContext();
 
   const { i18n, t } = useTranslation();
 
@@ -64,19 +62,11 @@ function CiteTemplate({
 
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const [cloning, setCloning] = useState(false);
-
   const { data } = useQuery(FIND_USER_SUBSCRIPTIONS, {
     variables: {
       query: { userId: { userId: user?.id }, incident_id: { incident_id: incident.incident_id } },
     },
   });
-
-  const {
-    data: lastIncident,
-    loading: loadingLastIncident,
-    refetch: refetchLastestIncidentId,
-  } = useQuery(GET_LATEST_INCIDENT_ID);
 
   // meta tags
 
@@ -142,8 +132,6 @@ function CiteTemplate({
   const [subscribeToNewReportsMutation, { loading: subscribing }] =
     useMutation(UPSERT_SUBSCRIPTION);
 
-  const [insertIncidentMutation] = useMutation(INSERT_INCIDENT);
-
   const subscribeToNewReports = async () => {
     if (!isSubscribed) {
       if (isRole('subscriber')) {
@@ -179,11 +167,10 @@ function CiteTemplate({
             ),
             severity: SEVERITY.success,
           });
-        } catch (error) {
+        } catch (e) {
           addToast({
-            message: <label>{t(error.error || 'An unknown error has ocurred')}</label>,
+            message: <label>{t(e.error || 'An unknown error has ocurred')}</label>,
             severity: SEVERITY.danger,
-            error,
           });
         }
       } else {
@@ -211,56 +198,6 @@ function CiteTemplate({
     }
   };
 
-  const cloneIncident = async () => {
-    setCloning(true);
-
-    try {
-      const newIncidentId = lastIncident.incidents[0].incident_id + 1;
-
-      const newIncident = {
-        title: incident.title,
-        description: incident.description,
-        incident_id: newIncidentId,
-        reports: { link: [] },
-        editors: incident.editors,
-        date: incident.date,
-        AllegedDeployerOfAISystem: { link: incident.Alleged_deployer_of_AI_system },
-        AllegedDeveloperOfAISystem: { link: incident.Alleged_developer_of_AI_system },
-        AllegedHarmedOrNearlyHarmedParties: {
-          link: incident.Alleged_harmed_or_nearly_harmed_parties,
-        },
-        nlp_similar_incidents: [],
-        editor_similar_incidents: [],
-        editor_dissimilar_incidents: [],
-      };
-
-      await insertIncidentMutation({ variables: { incident: newIncident } });
-
-      await refetchLastestIncidentId();
-
-      addToast({
-        message: (
-          <Trans i18n={i18n} newIncidentId={newIncidentId}>
-            You have successfully create Incident {{ newIncidentId }}.{' '}
-            <LocalizedLink language={locale} to={'/cite/' + newIncidentId}>
-              View incident
-            </LocalizedLink>
-            .
-          </Trans>
-        ),
-        severity: SEVERITY.success,
-      });
-    } catch (error) {
-      addToast({
-        message: <label>{t(error.error || 'An unknown error has ocurred')}</label>,
-        severity: SEVERITY.danger,
-        error,
-      });
-    }
-
-    setCloning(false);
-  };
-
   const incidentResponded = sortedReports.some(
     (report) => report.tags && report.tags.includes(RESPONSE_TAG)
   );
@@ -268,9 +205,15 @@ function CiteTemplate({
   return (
     <>
       <div className={'titleWrapper'}>
-        <div className="w-full flex justify-between flex-wrap gap-1">
-          <h1 className="text-2xl inline">{locale == 'en' ? metaTitle : defaultIncidentTitle}</h1>
-          <div className="inline-flex gap-2">
+        <h1 className="tw-styled-heading">{locale == 'en' ? metaTitle : defaultIncidentTitle}</h1>
+        <div className="flex justify-between w-full flex-wrap">
+          <div className="flex gap-2">
+            <SocialShareButtons
+              metaTitle={metaTitle}
+              path={locationPathName}
+              page="cite"
+              className="-mt-1"
+            ></SocialShareButtons>
             {incidentResponded && (
               <div className="self-center">
                 <Badge color="success" data-cy="responded-badge">
@@ -285,11 +228,6 @@ function CiteTemplate({
                 </Badge>
               </div>
             )}
-            <SocialShareButtons
-              metaTitle={metaTitle}
-              path={locationPathName}
-              page="cite"
-            ></SocialShareButtons>
           </div>
         </div>
       </div>
@@ -297,9 +235,7 @@ function CiteTemplate({
         <div className="shrink-1">
           <Row>
             <Col>
-              <div>
-                <strong>Description</strong>: {incident.description}
-              </div>
+              <strong>Description</strong>: {incident.description}
             </Col>
           </Row>
 
@@ -313,15 +249,12 @@ function CiteTemplate({
                 subscribing={subscribing}
                 isLiveData={liveVersion}
                 setIsLiveData={setIsLiveData}
-                loadingLastIncident={loadingLastIncident}
-                cloneIncident={cloneIncident}
-                cloning={cloning}
               />
             </Col>
           </Row>
 
           <Container>
-            <VideoPlayerCard videoURLs={videoURLs} data-cy="incident-video" />
+            <VideoPlayerCard videoURLs={videoURLs} />
             <Row>
               <Col>
                 <Card className="border-1.5 border-border-light-gray rounded-5px shadow-card mt-6">
@@ -410,30 +343,13 @@ function CiteTemplate({
               </Col>
             </Row>
 
-            {sortedReports.map((report) => {
-              let actions = <></>;
-
-              if (!loading && isRole('incident_editor')) {
-                actions = (
-                  <Button
-                    data-cy="edit-report"
-                    size={'xs'}
-                    color="light"
-                    href={`/cite/edit?report_number=${report.report_number}&incident_id=${incident.incident_id}`}
-                    className="hover:no-underline "
-                  >
-                    <Trans>Edit</Trans>
-                  </Button>
-                );
-              }
-              return (
-                <Row className="mt-6 mb-4" key={report.report_number}>
-                  <Col>
-                    <ReportCard item={report} incidentId={incident.incident_id} actions={actions} />
-                  </Col>
-                </Row>
-              );
-            })}
+            {sortedReports.map((report) => (
+              <Row className="mt-6 mb-4" key={report.report_number}>
+                <Col>
+                  <ReportCard item={report} incidentId={incident.incident_id} />
+                </Col>
+              </Row>
+            ))}
 
             <VariantList
               liveVersion={liveVersion}
@@ -450,26 +366,20 @@ function CiteTemplate({
               className="xl:hidden"
             />
 
-            <div className="flex justify-between">
-              <Button
-                color={'gray'}
+            <Pagination className="justify-between">
+              <Pagination.Item
                 href={localizePath({ path: `/cite/${prevIncident}` })}
                 disabled={!prevIncident}
-                className="hover:no-underline"
               >
-                <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-                <Trans>Previous Incident</Trans>
-              </Button>
-              <Button
-                color={'gray'}
+                ‹ <Trans>Previous Incident</Trans>
+              </Pagination.Item>
+              <Pagination.Item
                 href={localizePath({ path: `/cite/${nextIncident}` })}
                 disabled={!nextIncident}
-                className="hover:no-underline"
               >
-                <Trans>Next Incident</Trans>
-                <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-              </Button>
-            </div>
+                <Trans>Next Incident</Trans> ›
+              </Pagination.Item>
+            </Pagination>
           </Container>
         </div>
         <div className="hidden xl:block w-[16rem] 2xl:w-[18rem] ml-2 -mt-2 pr-4 shrink-0">

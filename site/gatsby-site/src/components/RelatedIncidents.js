@@ -77,13 +77,7 @@ const allSearchColumns = {
       return isValid(parsedDate) && getUnixTime(parsedDate) > 0;
     },
     getQueryVariables: (incident) => {
-      const today = new Date();
-
-      let datePublished = parse(incident.date_published, 'yyyy-MM-dd', today);
-
-      if (datePublished > today) {
-        datePublished = today;
-      }
+      const datePublished = parse(incident.date_published, 'yyyy-MM-dd', new Date());
 
       const epoch_date_published_gt = getUnixTime(subWeeks(datePublished, 2));
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CSVReader } from 'react-papaparse';
 import {
   useQueryParams,
@@ -29,11 +29,6 @@ import { Button } from 'flowbite-react';
 import { getCloudinaryPublicID } from 'utils/cloudinary';
 // validator from a new file
 import { checkLink } from 'utils/video';
-import { SUBMISSION_INITIAL_VALUES } from 'utils/submit';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 const CustomDateParam = {
   encode: encodeDate,
@@ -51,7 +46,7 @@ const CustomDateParam = {
 const queryConfig = {
   url: withDefault(StringParam, ''),
   title: withDefault(StringParam, ''),
-  authors: withDefault(ArrayParam, []),
+  authors: withDefault(StringParam, ''),
   submitters: withDefault(ArrayParam, []),
   incident_date: withDefault(CustomDateParam, ''),
   date_published: withDefault(CustomDateParam, ''),
@@ -64,20 +59,34 @@ const queryConfig = {
   language: withDefault(StringParam, 'en'),
 };
 
+const initialValues = {
+  url: '',
+  title: '',
+  incident_date: '',
+  date_published: '',
+  date_downloaded: '',
+  media_url: '',
+  cloudinary_id: '',
+  incident_ids: [],
+  text: '',
+  authors: [],
+  submitters: [],
+  developers: [],
+  deployers: [],
+  harmed_parties: [],
+  editor_notes: '',
+  language: 'en',
+  tags: [],
+};
+
 const SubmitForm = () => {
-  const { isRole, loading, user } = useUserContext();
+  const { isRole, loading } = useUserContext();
 
   const [query] = useQueryParams(queryConfig);
 
   const [isIncidentResponse, setIsIncidentResponse] = useState(false);
 
-  const isClient = typeof window !== 'undefined';
-
-  const [submission, setSubmission] = useState({});
-
-  const [submissionReset, setSubmissionReset] = useState({ reset: false, forceUpdate: false });
-
-  const [savingInLocalStorage, setSavingInLocalStorage] = useState(false);
+  const [submission, setSubmission] = useState(null);
 
   const {
     entities: { nodes: allEntities },
@@ -93,35 +102,24 @@ const SubmitForm = () => {
   `);
 
   useEffect(() => {
-    let submission = { ...query, cloudinary_id: '' };
+    const queryParams = { ...query, cloudinary_id: '' };
 
-    if (submission.tags && submission.tags.includes(RESPONSE_TAG)) {
+    for (const key of ['authors', 'submitters', 'developers', 'deployers', 'harmed_parties']) {
+      if (queryParams[key] && !Array.isArray(queryParams[key])) {
+        queryParams[key] = [queryParams[key]];
+      }
+    }
+
+    if (queryParams.tags && queryParams.tags.includes(RESPONSE_TAG)) {
       setIsIncidentResponse(true);
     }
 
-    if (submission.media_url) {
-      submission.cloudinary_id = getCloudinaryPublicID(submission.media_url);
+    if (queryParams.media_url) {
+      queryParams.cloudinary_id = getCloudinaryPublicID(queryParams.media_url);
     }
 
-    if (
-      isEqual(submission, SUBMISSION_INITIAL_VALUES) &&
-      isClient &&
-      localStorage.getItem('formValues')
-    ) {
-      submission = { ...JSON.parse(localStorage.getItem('formValues')) };
-    }
-
-    if (!loading) {
-      if (user?.profile?.email) {
-        submission.user = { link: user.id };
-
-        if (user.customData.first_name && user.customData.last_name) {
-          submission.submitters = [`${user.customData.first_name} ${user.customData.last_name}`];
-        }
-      }
-    }
-    setSubmission(submission);
-  }, [loading, user?.profile]);
+    setSubmission(queryParams);
+  }, []);
 
   const [displayCsvSection] = useState(false);
 
@@ -214,7 +212,7 @@ const SubmitForm = () => {
 
       await insertSubmission({ variables: { submission } });
 
-      setSubmission(SUBMISSION_INITIAL_VALUES);
+      setSubmission(initialValues);
 
       addToast({
         message: (
@@ -225,10 +223,6 @@ const SubmitForm = () => {
         ),
         severity: SEVERITY.success,
       });
-
-      if (isClient) {
-        localStorage.setItem('formValues', JSON.stringify(SUBMISSION_INITIAL_VALUES));
-      }
     } catch (e) {
       addToast({
         message: (
@@ -237,73 +231,24 @@ const SubmitForm = () => {
           </Trans>
         ),
         severity: SEVERITY.warning,
-        error: e,
       });
+      throw e;
     }
   };
-
-  const clearForm = () => {
-    const submission = { ...SUBMISSION_INITIAL_VALUES };
-
-    if (user?.profile?.email) {
-      submission.user = { link: user.id };
-
-      if (user.customData.first_name && user.customData.last_name) {
-        submission.submitters = [`${user.customData.first_name} ${user.customData.last_name}`];
-      }
-    }
-    setSubmission(submission);
-    setSubmissionReset((prevState) => ({
-      ...prevState,
-      reset: true,
-      forceUpdate: !prevState.forceUpdate, // toggle forceUpdate value
-    }));
-    localStorage.setItem('formValues', JSON.stringify(submission));
-  };
-
-  const submissionRef = useRef(null);
-
-  if (!submission || isEmpty(submission)) return <></>;
 
   return (
     <>
       <Helmet>
         <title>{t(isIncidentResponse ? 'New Incident Response' : 'New Incident Report')}</title>
       </Helmet>
-      <div className={'titleWrapper flex flex-row justify-between'}>
-        <h1 data-cy="submit-form-title">
+      <div className={'titleWrapper'}>
+        <h1 className="font-karla font-bold flex-1 pt-0" data-cy="submit-form-title">
           <Trans ns="submit">
             {isIncidentResponse ? 'New Incident Response' : 'New Incident Report'}
           </Trans>
         </h1>
-        <div className="flex items-center justify-center mt-2">
-          <span className="text-gray-400 text-sm">
-            {savingInLocalStorage ? (
-              <>
-                <FontAwesomeIcon icon={faSpinner} className="mr-1" />{' '}
-                <Trans>Saving as draft...</Trans>
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faCheck} className="mr-1" />
-                <Trans>Draft saved</Trans>
-              </>
-            )}
-          </span>
-          <Button
-            color="gray"
-            size={'xs'}
-            className={'ml-2'}
-            onClick={() => clearForm()}
-            data-cy="clear-form"
-          >
-            <Trans i18n={i18n} ns="submit">
-              Clear Form
-            </Trans>
-          </Button>
-        </div>
       </div>
-      <p ref={submissionRef}>
+      <p>
         {isIncidentResponse ? (
           <>
             {submission.incident_ids.length > 0 ? (
@@ -342,21 +287,12 @@ const SubmitForm = () => {
           </Trans>
         )}
       </p>
-
       <div className="my-5">
         {submission && (
           <SubmissionWizard
             submitForm={handleSubmit}
             initialValues={submission}
             urlFromQueryString={query.url}
-            submissionReset={submissionReset}
-            setSavingInLocalStorage={setSavingInLocalStorage}
-            scrollToTop={() => {
-              setTimeout(() => {
-                // This is needed to make it work in Firefox
-                submissionRef.current.scrollIntoView();
-              }, 0);
-            }}
           />
         )}
 

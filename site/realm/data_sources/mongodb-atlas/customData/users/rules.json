@@ -18,33 +18,19 @@
             "search": true
         },
         {
-            "name": "readOwnWriteOwn",
-            "apply_when": {},
+            "name": "subscriber",
+            "apply_when": {
+                "userId": "%%user.id"
+            },
             "document_filters": {
-                "write": {
-                    "userId": "%%user.id"
-                },
-                "read": {
-                    "userId": "%%user.id"
-                }
+                "write": {},
+                "read": {}
             },
-            "fields": {
-                "roles": {
-                    "write": false,
-                    "read": true
-                },
-                "userId": {
-                    "write": false,
-                    "read": true
-                }
-            },
+            "read": true,
+            "write": false,
             "insert": false,
-            "delete": true,
-            "search": true,
-            "additional_fields": {
-                "write": true,
-                "read": true
-            }
+            "delete": false,
+            "search": true
         }
     ]
 }

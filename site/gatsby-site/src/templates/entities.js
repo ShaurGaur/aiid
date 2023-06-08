@@ -62,9 +62,7 @@ const EntitiesPage = ({ pageContext, data, ...props }) => {
         }}
       />
       <Layout {...props} sidebarCollapsed={true} className="w-full">
-        <div className="titleWrapper">
-          <h1>{t(metaTitle)}</h1>
-        </div>
+        <h1 className="text-5xl mt-6 font-extrabold dark:text-white">{t(metaTitle)}</h1>
         <EntitiesTable data={entitiesData} className="mt-6" data-cy="entities" />
       </Layout>
     </>

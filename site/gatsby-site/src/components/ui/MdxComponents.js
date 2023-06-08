@@ -28,8 +28,6 @@ const Box = ({ children }) => (
   </blockquote>
 );
 
-const Float = ({ children }) => <div className={`lg:w-40 lg:float-right lg:ml-4`}>{children}</div>;
-
 const Components = {
   h1: ({ children }) => <h1 id={slug(children)}>{children}</h1>,
   h2: ({ children }) => <h2 id={slug(children)}>{children}</h2>,
@@ -41,7 +39,6 @@ const Components = {
   SensitiveImage,
   Button,
   Box,
-  Float,
 };
 
 export default Components;
