@@ -65,7 +65,7 @@
     }
 
     .tw-content {
-        @apply flex flex-grow p-4 pb-5 md:px-10 md:pb-10 md:pt-6 z-[1] relative overflow-hidden flex-1;
+        @apply flex flex-grow p-4 pb-5 md:px-10 md:pb-10 z-[1] relative overflow-hidden flex-1;
     }
 
     .tw-container {
@@ -288,14 +288,6 @@
 
     .tw-flag-prompt svg {
         @apply ml-[0.5ch] mr-[0.5ch] text-dark-gray;
-    }
-
-    .tw-flag-button {
-        @apply p-0 text-dark-gray hover:text-gray-500;
-    }
-
-    .tw-flag-button.flagged {
-        @apply text-red-50;
     }
 
     .tw-card-set {
@@ -777,6 +769,11 @@
   }
 
   .prose a {
-    @apply text-blue-500 !important;
+    @apply text-blue-500 no-underline hover:underline !important;
+  }
+
+  .titleWrapper h1 {
+    @apply font-medium m-0 p-0;
+    @apply leading-10 !important;
   }
 }
