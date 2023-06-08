@@ -4,7 +4,6 @@ import Layout from 'components/Layout';
 import Featured from 'components/landing/Featured';
 import Leaderboards from 'components/landing/Leaderboards';
 import Blog from 'components/landing/Blog';
-import WordCounts from 'components/landing/WordCounts';
 import Sponsors from 'components/landing/Sponsors';
 import AboutDatabase from 'components/landing/AboutDatabase ';
 import LatestReports from 'components/landing/LatestReports';
@@ -19,12 +18,7 @@ import Container from '../elements/Container';
 import CommonEntities from 'components/entities/CommonEntities';
 
 const LandingPage = (props) => {
-  const {
-    pageContext: { wordCountsSorted },
-    data,
-  } = props;
-
-  const localWordCounts = wordCountsSorted.filter((word, index) => index < 10);
+  const { data } = props;
 
   const { latestReport, latestReportIncident, latestPost } = data;
 
@@ -111,7 +105,8 @@ const LandingPage = (props) => {
 
         <div className="mb-5 md:mb-10 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-5 md:gap-10 flex-wrap">
           <div className="flex-1 lg:max-w-[50%] grow">
-            <WordCounts localWordCounts={localWordCounts} />
+            {/* <WordCounts localWordCounts={localWordCounts} /> */}
+            <RandomReports />
           </div>
           <div className="flex-1 lg:max-w-[50%] self-stretch">
             <RandomReports />
